@@ -1,1 +1,9 @@
-Release 0.99.2 - 12/11/2013
+Release 2.0.0 - 10/01/2014
+
+Class EigensystemPlotParam has been added, to allow all plot-related settings to be specified in an object of this class.
+
+The plots function now provides up to nine visualizations. This function generates a heatmap of the eigenfeatures by assays with use of the given contrast factor (eigenfeatureHeatmap), a heatmap of the features by eigenassays with use of the given contrast factor (eigenassayHeatmap), a bar plot with the eigenexpression fractions of all eigenfeatures (fraction), a screeplot for the eigenexpression fractions (scree), a bar plot with the eigenexpression fractions of the eigenfeatures without the dominant eigenfeature(s) (zoomedFraction), the intensity levels of selected eigenfeatures across the assays (by default eigenfeatures 1-4) (lines), the intensity levels of all eigenfeatures across the assays (allLines), polar plot for the assays according to their correlation with two eigenassays (eigenassayPolar), and polar plot for the features according to their correlation with two eigenfeatures (eigenfeaturePolar).
+
+The package now longer depends on ReportingTools. 
+
+The sort function has been deprecated, and replaced by the function project. This function returns the rectangular and polar coordinates of the eigensystem projection onto two specified eigenfeatures and eigenassays.

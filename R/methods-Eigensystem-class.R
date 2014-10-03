@@ -3,35 +3,7 @@
 ### =========================================================================
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Constructor
-###
-
-Eigensystem  <- function(matrix = matrix(), signMatrix = matrix(),
-                         assayMatrix = matrix(), featureMatrix = matrix(), eigenassays = matrix(),
-                         eigenexpressions = numeric(), eigenfeatures = matrix(), assaycorrelations = matrix(),
-                         featurecorrelations = matrix(), fractions = numeric(), entropy = numeric(),
-                         apply = character(), excludeEigenfeatures = numeric(), colorIdFeatures = numeric()) 
-{
-  new("Eigensystem", matrix = matrix,
-      signMatrix = signMatrix,
-      assayMatrix = assayMatrix,
-      featureMatrix = featureMatrix,
-      eigenassays = eigenassays,
-      eigenexpressions = eigenexpressions,
-      eigenfeatures = eigenfeatures,
-      assaycorrelations = assaycorrelations,
-      featurecorrelations = featurecorrelations,
-      fractions = fractions,
-      entropy = entropy,
-      apply = apply,
-      excludeEigenfeatures = excludeEigenfeatures,
-      colorIdFeatures = colorIdFeatures
-      ) 
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Setters
+### Getters
 ###
 
 ##' @export
@@ -65,7 +37,7 @@ colorIdFeatures <- function(x) slot(x, "colorIdFeatures")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Getters
+### Setters
 ###
 
 "matrix<-" <- function(x, value) 
@@ -163,6 +135,7 @@ setMethod(show, "Eigensystem",
           )
 
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Helper functions
 ###
@@ -220,30 +193,23 @@ setMethod(show, "Eigensystem",
 }
 
 
-##' Checks validity of the eigenfeature xaxis and yaxis
+##' range check for eigenfeature axes
 ##' 
-##' Checks validity of the eigenfeature xaxis and yaxis
+##' Checks that a vector of integers is between 1 and max number of eigenfeatures (inclusive) 
 ##' @title Checks validity of the eigenfeature xaxis and yaxis
-##' @param xaxis
-##' @param yaxis
 ##' @param eigensystem
+##' @param axes
 ##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
-.checkEigenfeatureAxes <- function(xaxis, yaxis, eigensystem) {
+.checkEigenfeatureAxes <- function(eigensystem, axes) {
+  neigenfeatures <- dim(eigenfeatures(eigensystem))[1]
 
-  if (!is.numeric(xaxis) || !is.numeric(yaxis)) {
-    stop("The eigenfeatures to be shown on the x/y-axes should be positive integers")
-  } else if (length(xaxis)>1 || length(yaxis)>1) {
-    stop("Only one positive integer should be provided for the eigenfeature to be shown on the x- or y-axis")
-  } else if (length(xaxis)==1 && xaxis<0) {
-    stop("The eigenfeature to be shown on the x-axis should be a positive integer")
-  } else if (length(xaxis)==1 && xaxis>ncol(matrix(eigensystem))) {
-    stop("The eigenfeature to be shown on the x-axis should be a positive integer ranging from 1 to the number of eigenfeatures in the system")
-  } else if (length(yaxis)==1 && yaxis<0) {
-    stop("The eigenfeature to be shown on the y-axis should be a positive integer")
-  } else if (length(yaxis)==1 && yaxis>ncol(matrix(eigensystem))) {
-    stop("The eigenfeature to be shown on the y-axis should be a positive integer ranging from 1 to the number of eigenfeatures in the system")
-  }
+  axesI <- as.integer(axes)
+  if(any(axesI < 1) | any(axesI > neigenfeatures) | any(axes != axesI) | any(is.na(axesI))) 
+    stop("Axes must be integers ranging between 1 and the total number of eigenfeatures inclusive")
+  else
+    axesI
 }
+
 
 
 ##' Checks validity of color ID for assays or features
@@ -294,15 +260,17 @@ setMethod(show, "Eigensystem",
 ##' @param contrast
 ##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
 .checkContrast <- function(contrast) {
-
   if (!is.numeric(contrast)) {
     stop("The contrast for heatmap visualization should be a positive integer")
   } else if (length(contrast)>1) {
     stop("Only one positive integer should be provided for the contrast for heatmap visualization")
-  } else if (length(contrast)==1 && contrast<0) {
+  } else if (length(contrast)==1 && contrast < 0) {
     stop("The contrast for heatmap visualization should be a positive integer")
+  } else {
+    contrast
   }
 }
+
 
 
 ##' Checks validity of prefix
@@ -312,22 +280,21 @@ setMethod(show, "Eigensystem",
 ##' @param prefix
 ##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
 .checkPrefix <- function(prefix) {
-
   if (!is.character(prefix)) {
     stop("The prefix for the plot and html file names should be a character")
   } else if (length(prefix)>1) {
     stop("Only one string should be provided for the prefix for the plot and html file names")
+  } else {
+    prefix
   }
 }
-
-
 
 ##' Checks validity of eigenfeatures for exclusion
 ##' 
 ##' Checks validity of eigenfeatures for exclusion
 ##' @title Checks validity of eigenfeatures for exclusion
 ##' @param exclude.eigenfeatures
-##' @param eigensystem
+##' @param eigensystem object of class eigensystem
 ##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
 .checkExcludeEigenfeatures <- function(excludeEigenfeatures, eigensystem) {
 
@@ -343,15 +310,116 @@ setMethod(show, "Eigensystem",
 }
 
 
+##' Checks dimensions of provided eigensystem and eigensystemPlotParam objects
+##' 
+##' Checks dimensions of provided eigensystem and eigensystemPlotParam objects
+##' @title Checks dimensions of provided eigensystem and eigensystemPlotParam objects
+##' @param eigensystem object of class Eigensystem
+##' @param eigensystemPlotParams object of class EigensystemPlotParam
+##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
+.checkDimensions <- function(eigensystem, eigensystemPlotParams) {
+  nassays <- ncol(matrix(eigensystem))
+  nfeatures <- nrow(matrix(eigensystem))
+  whichAssays <- whichAssays(eigensystemPlotParams)
+  whichFeatures <- whichFeatures(eigensystemPlotParams)
+  whichEigenassays <- whichEigenassays(eigensystemPlotParams)
+  whichEigenfeatures <- whichEigenfeatures(eigensystemPlotParams)
+  if(length(whichFeatures) == 0) {
+    whichFeatures <- seq(1, nfeatures) 
+  }
+  if(length(whichEigenfeatures) == 0) {
+    whichEigenFeatures <- seq(1, nfeatures)
+  }
+  if(length(whichAssays) == 0) {
+    whichAssays <- seq(1, nassays)
+  }
+  if(length(whichEigenassays) == 0) {
+    whichEigenAssays <- seq(1, nassays)
+  }
+  if(length(whichFeatures) > nfeatures | length(whichEigenfeatures) > nfeatures |
+     length(whichAssays) > nassays | length(whichEigenassays) > nassays) {
+    stop("[EigensystemPlotParam: validation] too many features or assays being requested for plot.")
+  } else {
+    list(nassays=nassays, nfeatures=nfeatures,
+         whichFeatures=whichFeatures, whichEigenfeatures=whichEigenfeatures,
+         whichAssays=whichAssays, whichEigenassays=whichEigenassays,
+         eigensystemrank=dim(eigenfeatures(eigensystem))[1])
+  }
+}
+
+
+##' Checks validity of provided color map
+##' 
+##' Checks validity of provided color map
+##' @title Checks validity of provided color map for assays and features
+##' @param eigensystem object of class Eigensystem
+##' @param eigensystemPlotParams object of class EigensystemPlotParam
+##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
+.checkColorMaps <- function(eigensystem, eigensystemPlotParams) {
+  # check or generate assayColorMap
+  assayColorMap <- assayColorMap(eigensystemPlotParams)
+  variables <- as.list(names(assayColorMap))
+  assay.color.map <- lapply(variables,
+                            function(variable) {
+                              if(!variable %in% colnames(assayMatrix(eigensystem))) {
+                                stop(paste("Color map defined for assay annotation that does not exist:",variable))
+                              }
+                              if(all(is.na(assayColorMap[[variable]]))) {
+                                # create color map
+                                assay.levels <- levels(as.factor(assayMatrix(eigensystem)[,variable]))
+                                assay.colors <- rainbow(length(assay.levels))
+                                names(assay.colors) <- assay.levels
+                                assay.colors
+                              } else { 
+                                if(!any(names(assayColorMap[[variable]])  %in% assayMatrix(eigensystem)[,variable])) {
+                                  stop(paste("Color map defined for assay annotations that do not exist:",
+                                             variable,
+                                             names(assayColorMap[[variable]][!names(assayColorMap[[variable]])  %in% assayMatrix(eigensystem)[,variable]])))
+                                } else {
+                                  assayColorMap[[variable]]
+                                }
+                              }
+                            })
+  names(assay.color.map) <- variables
+
+  # check or generate featureColorMap
+  featureColorMap <- featureColorMap(eigensystemPlotParams)
+  variables <- as.list(names(featureColorMap))
+  feature.color.map <- lapply(variables,
+                              function(variable) {
+                                if(!variable %in% colnames(featureMatrix(eigensystem))) {
+                                  stop(paste("Color map defined for feature annotation that does not exist:",variable))
+                                }
+                                if(all(is.na(featureColorMap[[variable]]))) {
+                                  feature.levels <- levels(as.factor(featureMatrix(eigensystem)[,variable]))
+                                  feature.colors <- rainbow(length(feature.levels))
+                                  names(feature.colors) <- feature.levels
+                                  feature.colors
+                                } else { 
+                                  if(!any(names(featureColorMap[[variable]])  %in% featureMatrix(eigensystem)[,variable])) {
+                                    stop(paste("Color map defined for feature annotations that do not exist:",
+                                               variable,
+                                               names(featureColorMap[[variable]][!names(featureColorMap[[variable]])  %in% featureMatrix(eigensystem)[,variable]])))
+                                  } else {
+                                    featureColorMap[[variable]]
+                                  }
+                                }
+                              })
+  names(feature.color.map) <- variables
+  list(assayColorMap=assay.color.map, featureColorMap=feature.color.map)
+}
+
 ##' Checks validity of figure
 ##' 
 ##' Checks validity of figure
 ##' @title Checks validity of figure
 ##' @param figure
 ##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
-.checkFigure <- function(figure) {
-  
+.checkFigure <- function(figure) { 
   if (!is.logical(figure)) {
     stop("Variable figure should be a boolean (TRUE or FALSE) indicating whether figures should be shown or saved as pdf")
+  } else {
+    figure
   }
 }
+

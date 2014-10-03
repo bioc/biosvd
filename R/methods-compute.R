@@ -16,20 +16,21 @@
   fractions <- eigenexpressions^2/sum(eigenexpressions^2)
   names(fractions) <- c(1:min(nrow(matrix),ncol(matrix)))
   
-  Eigensystem(matrix = matrix,
-              signMatrix = sign.matrix,
-              assayMatrix = assay.matrix,
-              featureMatrix = feature.matrix,
-              eigenassays = eigenassays,
-              eigenexpressions = eigenexpressions,
-              eigenfeatures = eigenfeatures,
-              assaycorrelations = diag(eigenexpressions) %*% eigenfeatures,
-              featurecorrelations = t(eigenassays %*% diag(eigenexpressions)),
-              fractions = fractions,
-              entropy = round(100*(-sum(fractions*log(fractions))/log(ncol(eigenassays))))/100,
-              apply = apply,
-              excludeEigenfeatures = if(fractions[2] > 0.15 && sum(fractions[1:2]) > 0.85) {c(1,2)} else {1}
-              )
+  new("Eigensystem",
+      matrix = matrix,
+      signMatrix = sign.matrix,
+      assayMatrix = assay.matrix,
+      featureMatrix = feature.matrix,
+      eigenassays = eigenassays,
+      eigenexpressions = eigenexpressions,
+      eigenfeatures = eigenfeatures,
+      assaycorrelations = diag(eigenexpressions) %*% eigenfeatures,
+      featurecorrelations = t(eigenassays %*% diag(eigenexpressions)),
+      fractions = fractions,
+      entropy = round(100*(-sum(fractions*log(fractions))/log(ncol(eigenassays))))/100,
+      apply = apply,
+      excludeEigenfeatures = if(fractions[2] > 0.15 && sum(fractions[1:2]) > 0.85) {c(1,2)} else {1}
+      )
 }
 
 

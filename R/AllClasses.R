@@ -67,18 +67,156 @@ setClassUnion("numericORfactor", c("numeric", "factor"))
 ##' @seealso \link{compute,Eigensystem-method}
 ##' @references Alter O, Brown PO and Botstein D. Singular value decomposition for genome-wide expression data processing and modeling. Proc Natl Acad Sci U.S.A. 97(18), 10101-10106 (2000).
 ##' @keywords methods classes
-setClass("Eigensystem",
-         representation(matrix = "matrix",
-                        signMatrix = "matrix",
-                        assayMatrix = "matrix",
-                        featureMatrix = "matrix",
-                        eigenassays = "matrix",
-                        eigenexpressions = "numeric",
-                        eigenfeatures = "matrix",
-                        assaycorrelations = "matrix",
-                        featurecorrelations = "matrix",
-                        fractions = "numeric",
-                        entropy = "numeric",
-                        apply = "character",
-                        excludeEigenfeatures = "numeric",
-                        colorIdFeatures = "numericORfactor"))
+setClass(
+         Class="Eigensystem",
+         representation=representation(
+           matrix = "matrix",
+           signMatrix = "matrix",
+           assayMatrix = "matrix",
+           featureMatrix = "matrix",
+           eigenassays = "matrix",
+           eigenexpressions = "numeric",
+           eigenfeatures = "matrix",
+           assaycorrelations = "matrix",
+           featurecorrelations = "matrix",
+           fractions = "numeric",
+           entropy = "numeric",
+           apply = "character",
+           excludeEigenfeatures = "numeric",
+           colorIdFeatures = "numericORfactor"
+           ),
+         validity=function(object) {
+         },
+         prototype=prototype(
+           matrix = matrix(),
+           signMatrix = matrix(),
+           assayMatrix = matrix(),
+           featureMatrix = matrix(),
+           eigenassays = matrix(),
+           eigenexpressions = numeric(),
+           eigenfeatures = matrix(),
+           assaycorrelations = matrix(),
+           featurecorrelations = matrix(),
+           fractions = numeric(),
+           entropy = numeric(),
+           apply = character(),
+           excludeEigenfeatures = numeric(),
+           colorIdFeatures = numeric()
+           )
+         )
+
+##' The EigensystemPlotParam class
+##' 
+##' \code{EigensystemPlotParam} is a list-based class for storing the parameters needed to specify plot features used by \code{link{plot,plot-method}} in plotting Eigensystem diagnostics, projections and transformations.
+##' 
+##' The \code{EigensystemPlotParam} class stores the list of desired plots, color palettes and keys, figure file and directory names and other necessary parameters.
+##' Data in the \code{EigensystemPlotParam} may be organized into slots:
+##' \sQuote{plots}, \sQuote{palette}, \sQuote{whichAssays}, \sQuote{whichFeatures},
+##' \sQuote{whichEigenassays}, \sQuote{whichEigenfeatures}, \sQuote{whichPolarAxes},
+##' \sQuote{assayColorMap}, \sQuote{featureColorMap}, \sQuote{contrast},
+##' \sQuote{negativeValues}, \sQuote{path}, \sQuote{prefix},
+##' \sQuote{filename}, \sQuote{figure},
+##' brief descriptions of which follow.
+##'
+##' @name EigensystemPlotParam-class
+##' @rdname EigensystemPlotParam-class
+##' @aliases EigensystemPlotParam plots palette whichAssays whichFeatures whichEigenassays whichEigenfeatures whichPolarAxes assayColorMap
+##' featureColorMap contrast negativeValues path prefix filenames figure show,EigensystemPlotParam-method
+##' @exportClass EigensystemPlotParam 
+##' @section Slots:
+##' \code{EigensystemPlotParam} objects contain the following slots
+##' \describe{
+##' 	\item{\code{plots}:}{\code{character vector} indicating one or more plot choices from: "eigenfeatureHeatmap", "eigenassayHeatmap", "sortedHeatmap",
+##'           "fraction","scree","zoomedFraction", "lines", "allLines", "eigenfeaturePolar", "eigenassayPolar". Defaults to all. }
+##' 	\item{\code{palette}:}{\code{function} defining the palette to be used for heatmaps. Default is a Blue-Yellow color ramp. }
+##' 	\item{\code{whichAssays}:}{\code{numeric vector} listing which assays are to be included in the plot(s). Default is all. }
+##' 	\item{\code{whichFeatures}:}{\code{numeric vector} which features to include in plots. Default is all. }
+##' 	\item{\code{whichEigenassays}:}{\code{numeric vector}  which eigenassays to include in plots. }
+##' 	\item{\code{whichEigenfeatures}:}{\code{numeric vector} which eigenfeatures to include in plots. Defaults to first four. }
+##'     \item{\code{whichPolarAxes}:}{\code{numeric vector} which two eigenassays/eigenfeatures to include in polar plots. Default is first two. }
+##' 	\item{\code{assayColorMap}:}{ assayColorMap and featureColorMap are optional \code{list}s of colors corresponding to the
+##'           levels of these annotations for assays and features. The elements of each list are named by the annotation column they
+##'           correspond to. Each element is itself a named vector of colors, named by the level of the annotation it reflects (see example). }
+##' 	\item{\code{featureColorMap}:}{\code{list} }
+##' 	\item{\code{contrast}:}{\code{numeric} value specifying the contrast to use in heatmaps. }
+##' 	\item{\code{negativeValues}:}{\code{logical} indicating whether scaling of values for heatmap should result in range that includes negative values. Default is TRUE.}
+##' 	\item{\code{path}:}{\code{character} specifying the path of files for figure output. Default is current working directory.}
+##' 	\item{\code{prefix}:}{\code{character} specifying an optional prefix to add to filenames. Default is biosvd.}
+##' 	\item{\code{filenames}:}{\code{character} optional name for the files containing the plots. Names correspond to elements of 'plots' vector.}
+##' 	\item{\code{figure}:}{\code{logical} specifying whether to ouptut plots into files. Default is FALSE. }
+##' }
+##' 
+##' @section Accessors:
+##' \describe{
+##'    \item{}{\code{plots(x)}, \code{plots(x) <- value}}
+##'    \item{}{\code{palette(x)}, \code{palette(x) <- value}}
+##'    \item{}{\code{whichAssays(x)}, \code{whichAssays(x) <- value}}
+##'    \item{}{\code{whichFeatures(x)}, \code{whichFeatures(x) <- value}}
+##'    \item{}{\code{whichEigenassays(x)}, \code{whichEigenassays(x) <- value}}
+##'    \item{}{\code{whichEigenfeatures(x)}, \code{whichEigenfeatures(x) <- value}}
+##'    \item{}{\code{whichPolarAxes(x)}, \code{whichPolarAxes(x) <- value}}
+##'    \item{}{\code{assayColorMap(x)}, \code{assayColorMap(x) <- value}}
+##'    \item{}{\code{featureColorMap(x)}, \code{featureColorMap(x) <- value}}
+##'    \item{}{\code{contrast(x)}, \code{contrast(x) <- value}}
+##'    \item{}{\code{negativeValues(x)}, \code{negativeValues(x) <- value}}
+##'    \item{}{\code{path(x)}, \code{path(x) <- value}}
+##'    \item{}{\code{prefix(x)}, \code{prefix(x) <- value}}
+##'    \item{}{\code{filenames(x)}, \code{filenames(x) <- value}}
+##'    \item{}{\code{figure(x)}, \code{figure(x) <- value}}
+##'  }
+##'
+##' @author Anneleen Daemen \email{daemen.anneleen@@gene.com}, Matthew Brauer \email{brauer.matthew@@gene.com}
+##' @examples
+##' data(YeastData_alpha)
+##'
+##' params <- new("EigensystemPlotParam")
+##' cellcycle.col.map <- c("orange2", "darkgreen", "blue2", "magenta2", "red2")
+##' names(cellcycle.col.map) <- c("S", "G2", "M", "M/G1", "G1")
+##' assayColorMap(params) <- list(Cell.cycle.stage=cellcycle.col.map)
+##' featureColorMap(params) <- list(Cell.cycle.stage=NA)
+##' 
+##' @references Alter O, Brown PO and Botstein D. Singular value decomposition for genome-wide expression data processing and modeling. Proc Natl Acad Sci U.S.A. 97(18), 10101-10106 (2000).
+##' @keywords methods classes
+setClass(
+         Class="EigensystemPlotParam",
+         representation=representation(
+           plots="character",
+           palette="function",
+           whichAssays="numeric",
+           whichFeatures="numeric",
+           whichEigenassays="numeric",
+           whichEigenfeatures="numeric",
+           whichPolarAxes="numeric",
+           assayColorMap="list",
+           featureColorMap="list",
+           contrast="numeric",
+           negativeValues="logical",
+           path="character",
+           prefix="character",
+           filenames="character",
+           figure="logical"
+           ),
+         validity=function(object) {
+           },
+         prototype=prototype(
+           plots=c("eigenfeatureHeatmap","eigenassayHeatmap","sortedHeatmap","fraction","scree","zoomedFraction","lines","allLines","eigenfeaturePolar","eigenassayPolar"),
+           palette=colorRampPalette(c("blue","yellow"), space="rgb"),
+           whichAssays=numeric(),
+           whichFeatures=numeric(),
+           whichEigenassays=numeric(),
+           whichEigenfeatures=c(1:4),
+           whichPolarAxes=c(2,1),
+           assayColorMap=list(),
+           featureColorMap=list(),
+           contrast=3,
+           negativeValues=TRUE,
+           path=getwd(),
+           prefix="biosvd",
+           filenames=character(),
+           figure=FALSE
+           )
+         )
+
+
+
+
