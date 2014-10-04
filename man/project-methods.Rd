@@ -15,7 +15,7 @@
 \item{type}{string specifying the dimensions to return the coordinates for, either features or assays (default features)}
 }
 \value{
-Object of class eigensystem
+data.frame
 }
 \description{
 Returns the rectangular and polar coordinates of the eigensystem projection onto one or two eigenfeatures and eigenassays

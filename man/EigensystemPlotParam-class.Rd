@@ -37,7 +37,7 @@ brief descriptions of which follow.
 
 \code{EigensystemPlotParam} objects contain the following slots
 \describe{
-	\item{\code{plots}:}{\code{character vector} indicating one or more plot choices from: "eigenfeatureHeatmap", "eigenassayHeatmap",
+	\item{\code{plots}:}{\code{character vector} indicating one or more plot choices from: "eigenfeatureHeatmap", "eigenassayHeatmap", "sortedHeatmap",
           "fraction","scree","zoomedFraction", "lines", "allLines", "eigenfeaturePolar", "eigenassayPolar". Defaults to all. }
 	\item{\code{palette}:}{\code{function} defining the palette to be used for heatmaps. Default is a Blue-Yellow color ramp. }
 	\item{\code{whichAssays}:}{\code{numeric vector} listing which assays are to be included in the plot(s). Default is all. }
