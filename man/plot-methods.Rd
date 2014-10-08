@@ -35,14 +35,14 @@ data(StarvationData)
 eigensystem <- compute(StarvationData)
 ## Generates all provided plots for the eigensystem
 params <- new("EigensystemPlotParam")
-plot(eigensystem, params)
+if (.Platform$OS.type != "windows") plot(eigensystem, params)
 ## Generates all provided plots for the eigensystem, with use of contrast 2 for the heatmap
 contrast(params) <- 2
-plot(eigensystem, params)
+if (.Platform$OS.type != "windows") plot(eigensystem, params)
 ## Generates the fraction and lines plot for the eigensystem
 params <- new("EigensystemPlotParam")
 plots(params) <- c("fraction","lines")
-plot(eigensystem, params)
+if (.Platform$OS.type != "windows") plot(eigensystem, params)
 }
 \author{
 Anneleen Daemen \email{daemen.anneleen@gene.com}, Matthew Brauer \email{brauer.matthew@gene.com}

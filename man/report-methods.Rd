@@ -41,16 +41,11 @@ eigensystem <- compute(eigensystem, apply="variance")
 eigensystem <- exclude(eigensystem, excludeEigenfeatures=0)
 
 ## Generate report for eigenfeatures 1 and 2
-report(eigensystem, new("EigensystemPlotParam"))
-## Generate report for eigenfeatures 2 and 3
 params <- new("EigensystemPlotParam")
-whichPolarAxes(params) <- c(3,2)
+if (.Platform$OS.type \%in\% "windows") path(params) <- getwd()
 report(eigensystem, params)
-## Generate report for eigenfeatures 1 and 2 with coloring of the assays as indicated by the variable "Starvation" in the ExpressionSet {\\tt StarvationData} (starvation: carbon vs. nitrogen)
-params <- new("EigensystemPlotParam")
-col.map <- c("orange2", "darkgreen")
-names(col.map) <- c("carbon", "nitrogen")
-assayColorMap(params) <- list(Starvation=col.map)
+## Generate report for eigenfeatures 2 and 3
+whichPolarAxes(params) <- c(3,2)
 report(eigensystem, params)
 }
 \author{
