@@ -2,7 +2,7 @@ Package: biosvd
 Type: Package
 Title: Package for high-throughput data processing, outlier detection,
     noise removal and dynamic modeling
-Version: 2.0.3
+Version: 2.0.4
 Date: 2014-10-08
 Author: Anneleen Daemen <daemena@gene.com>, Matthew Brauer
     <matthejb@gene.com>
